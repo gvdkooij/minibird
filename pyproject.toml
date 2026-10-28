@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=75,<81"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "minibird"
+version = "0.0.1"
+description = "Self-hosted invoicing software"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi==0.115.12",
+  "uvicorn==0.34.2",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest==8.3.5",
+  "httpx==0.28.1",
+]
+
+[tool.setuptools.packages.find]
+include = ["minibird*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
