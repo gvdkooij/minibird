@@ -59,6 +59,11 @@ MIGRATIONS = (
         vat_identifier TEXT,
         archived INTEGER NOT NULL DEFAULT 0 CHECK (archived IN (0, 1))
     )""",),
+    (
+        "CREATE TABLE administrator (id INTEGER PRIMARY KEY CHECK (id = 1), username TEXT NOT NULL, password_hash TEXT NOT NULL)",
+        "CREATE TABLE web_sessions (token_hash TEXT PRIMARY KEY, csrf TEXT NOT NULL, authenticated INTEGER NOT NULL DEFAULT 0, expires INTEGER NOT NULL)",
+        "CREATE TABLE login_limit (id INTEGER PRIMARY KEY CHECK (id = 1), attempts INTEGER NOT NULL, window_start INTEGER NOT NULL)",
+    ),
 )
 
 

@@ -4,7 +4,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from minibird.main import app
-from minibird.customers import migrate
+from minibird.customers import MIGRATIONS, migrate
 
 
 @pytest.fixture
@@ -80,7 +80,7 @@ def test_persistence_and_repeatable_upgrade(client, customer, tmp_path):
             migrate(connection)
             assert connection.execute('SELECT value FROM unrelated').fetchone()[0] == 'preserve me'
             assert connection.execute('SELECT name FROM customers').fetchone()[0] == customer['name']
-            assert connection.execute('SELECT version FROM schema_migrations').fetchall() == [(1,)]
+            assert connection.execute('SELECT version FROM schema_migrations').fetchall() == [(1,), (2,)]
     with TestClient(app, headers=client.headers) as restarted:
         assert restarted.get('/customers/1').json()['email'] == customer['email']
 
@@ -88,11 +88,11 @@ def test_persistence_and_repeatable_upgrade(client, customer, tmp_path):
 def test_reject_newer_schema_without_changing_data(tmp_path):
     with sqlite3.connect(tmp_path / 'newer.sqlite3') as connection:
         connection.execute('CREATE TABLE schema_migrations (version INTEGER PRIMARY KEY)')
-        connection.executemany('INSERT INTO schema_migrations VALUES (?)', [(1,), (2,)])
+        connection.executemany('INSERT INTO schema_migrations VALUES (?)', [(i,) for i in range(1, len(MIGRATIONS) + 2)])
         connection.commit()
         with pytest.raises(RuntimeError, match='Unsupported'):
             migrate(connection)
-        assert connection.execute('SELECT version FROM schema_migrations').fetchall() == [(1,), (2,)]
+        assert connection.execute('SELECT version FROM schema_migrations').fetchall() == [(i,) for i in range(1, len(MIGRATIONS) + 2)]
 
 
 def test_optional_vat_pagination_and_sql_input(client, customer):
