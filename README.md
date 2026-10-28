@@ -17,3 +17,18 @@ persistence, validation and non-destructive archiving. See
 [installation and customer workflow](docs/INSTALL.md) for configuration, migrations,
 backups and rollback. Production authentication review remains required before
 using real customer data.
+
+
+## Webinterface
+
+MiniBird heeft nu een Nederlandstalige webinterface voor klantenbeheer: inloggen,
+klanten bekijken, toevoegen, wijzigen en archiveren. Maak het enige
+beheerdersaccount lokaal aan met `python -m minibird.admin`. Zie de
+[installatiehandleiding](docs/INSTALL.md#nederlandstalige-webapp-en-beheerdersaccount)
+voor het databasepad, lokale HTTP-ontwikkeling en verplichte HTTPS-configuratie
+voor productie. De bestaande bearer-token-API blijft beschikbaar.
+
+Wachtwoorden worden gehasht opgeslagen. De webapp gebruikt server-side sessies,
+CSRF-bescherming en een persistente inloglimiet, zonder extra services of
+JavaScript-framework. Een productiereview blijft vereist vóór gebruik met echte
+klantgegevens.
